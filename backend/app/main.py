@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.chat import router as chat_router
+from app.routes.knowledge import router as knowledge_router
 
 app = FastAPI(
     title="HSR RAG Chatbot Backend",
@@ -20,6 +21,7 @@ app.add_middleware(
 )
 
 app.include_router(chat_router)
+app.include_router(knowledge_router)
 
 
 @app.get("/")

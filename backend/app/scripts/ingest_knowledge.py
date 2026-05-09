@@ -148,14 +148,14 @@ def load_markdown_documents() -> List[Dict]:
     return documents
 
 
-def main():
+def ingest_knowledge() -> int:
     documents = load_markdown_documents()
 
     collection = reset_collection()
 
     if not documents:
         print("No documents found.")
-        return
+        return 0
 
     collection.add(
         ids=[document["id"] for document in documents],
@@ -173,6 +173,12 @@ def main():
             f"{metadata['topic']} | "
             f"{metadata['file_name']}"
         )
+
+    return len(documents)
+
+
+def main():
+    ingest_knowledge()
 
 
 if __name__ == "__main__":

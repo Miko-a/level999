@@ -117,3 +117,12 @@ Content:
         )
 
     return "\n\n".join(context_parts)
+
+
+def get_vector_stats() -> Dict:
+    collection = get_or_create_collection()
+
+    return {
+        "collection_name": COLLECTION_NAME,
+        "chunk_count": collection.count(),
+    }

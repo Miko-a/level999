@@ -98,12 +98,23 @@ export default function Home() {
     <main className="min-h-screen bg-slate-950 text-slate-100">
       <section className="mx-auto flex min-h-screen max-w-4xl flex-col px-4 py-6">
         <header className="mb-6 border-b border-slate-800 pb-4">
-          <h1 className="text-2xl font-bold">
-            HSR RAG Chatbot
-          </h1>
-          <p className="mt-2 text-sm text-slate-400">
-            Phase 3: semantic RAG with local vector database.
-          </p>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold">
+                HSR RAG Chatbot
+              </h1>
+              <p className="mt-2 text-sm text-slate-400">
+                Ask anything related to Honkai Star Rail
+              </p>
+            </div>
+
+            <a
+              href="/admin"
+              className="rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-blue-500 hover:text-white"
+            >
+              Admin
+            </a>
+          </div>
         </header>
 
         <div className="flex-1 space-y-4 overflow-y-auto rounded-xl border border-slate-800 bg-slate-900 p-4">
