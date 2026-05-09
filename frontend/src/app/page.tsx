@@ -6,6 +6,10 @@ type SourceDocument = {
   title: string;
   source_id: string;
   file_name: string;
+  chunk_id: string;
+  category: string;
+  topic: string;
+  version: string;
   score: number;
   preview: string;
 };
@@ -21,7 +25,7 @@ export default function Home() {
     {
       role: "assistant",
       content:
-        "Halo. Aku adalah HSR assistant Phase 2. Saat ini aku memakai knowledge base lokal sederhana untuk menjawab pertanyaan dasar tentang Honkai: Star Rail.",
+        "Halo. Aku adalah HSR assistant Phase 3. Saat ini aku memakai semantic retrieval dengan local vector database untuk mencari knowledge base yang relevan.",
     },
   ]);
 
@@ -98,7 +102,7 @@ export default function Home() {
             HSR RAG Chatbot
           </h1>
           <p className="mt-2 text-sm text-slate-400">
-            Phase 2: local knowledge base with simple RAG retrieval.
+            Phase 3: semantic RAG with local vector database.
           </p>
         </header>
 
@@ -128,22 +132,40 @@ export default function Home() {
                       </p>
 
                       <div className="space-y-2">
-                        {message.sources.map((source) => (
-                          <div
-                            key={source.source_id}
-                            className="rounded-lg border border-slate-700 bg-slate-900 p-3"
-                          >
-                            <p className="text-xs font-semibold text-slate-200">
-                              {source.title}
-                            </p>
-                            <p className="mt-1 text-xs text-slate-400">
-                              File: {source.file_name} | Score: {source.score}
-                            </p>
-                            <p className="mt-2 text-xs text-slate-500">
-                              {source.preview}
-                            </p>
+                        {message.sources.map((source, index) => (
+                        <div
+                          key={`${source.source_id}-${source.chunk_id}-${index}`}
+                          className="rounded-lg border border-slate-700 bg-slate-900 p-3"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-xs font-semibold text-slate-200">
+                                {source.title}
+                              </p>
+
+                              <p className="mt-1 text-xs text-slate-400">
+                                {source.category} / {source.topic}
+                              </p>
+                            </div>
+
+                            <span className="rounded-full bg-slate-800 px-2 py-1 text-[10px] text-slate-400">
+                              {source.score.toFixed(4)}
+                            </span>
                           </div>
-                        ))}
+
+                          <p className="mt-2 text-xs text-slate-400">
+                            File: {source.file_name}
+                          </p>
+
+                          <p className="mt-1 text-xs text-slate-400">
+                            Chunk: {source.chunk_id} | Version: {source.version}
+                          </p>
+
+                          <p className="mt-2 text-xs text-slate-500">
+                            {source.preview}
+                          </p>
+                        </div>
+                      ))}
                       </div>
                     </div>
                   )}

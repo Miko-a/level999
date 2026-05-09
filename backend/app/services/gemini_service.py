@@ -11,39 +11,48 @@ USE_MOCK_LLM = os.getenv("USE_MOCK_LLM", "false").lower() == "true"
 def ask_mock_llm(user_message: str, context: str) -> str:
     if not context.strip():
         return f"""
-Aku menerima pertanyaan kamu:
-
-"{user_message}"
-
-Namun knowledge base lokal belum memiliki dokumen yang cukup relevan untuk menjawab pertanyaan ini.
-
-Karena saat ini backend berjalan dalam mock mode, aku tidak akan mengarang jawaban di luar knowledge base.
-
-Saran:
-- Tambahkan dokumen baru ke folder backend/app/knowledge.
-- Pastikan dokumen mengandung kata kunci yang sesuai dengan pertanyaan user.
-"""
-
-    return f"""
-Jawaban mock berbasis knowledge base lokal.
+Knowledge base lokal belum memiliki konteks yang cukup relevan untuk menjawab pertanyaan ini.
 
 Pertanyaan:
 "{user_message}"
 
-Berdasarkan dokumen yang ditemukan, berikut jawaban yang aman untuk Phase 2:
+Saran:
+- Tambahkan dokumen baru ke folder backend/app/knowledge.
+- Jalankan ulang ingestion dengan perintah: python -m app.scripts.ingest_knowledge
+- Pastikan dokumen memiliki metadata seperti Source ID, Category, Topic, Version, dan Tags.
+"""
+
+    return f"""
+Berdasarkan knowledge base lokal, berikut jawaban yang aman:
 
 {extract_simple_answer_from_context(context)}
 
 Catatan:
-- Ini adalah mock response karena Gemini sedang tidak dipakai.
-- Retrieval lokal sudah berjalan.
-- Jawaban ini belum memakai embedding/vector database.
-- Akurasi masih bergantung pada isi file Markdown di folder knowledge.
+- Jawaban ini berasal dari mock LLM.
+- Retrieval sudah memakai vector database lokal.
+- Knowledge base masih bersifat internal-demo.
+- Jangan gunakan jawaban ini sebagai klaim patch/meta terbaru.
 """
 
 
 def extract_simple_answer_from_context(context: str) -> str:
     lines = []
+
+    skipped_prefixes = (
+        "#",
+        "source id:",
+        "category:",
+        "topic:",
+        "game:",
+        "version:",
+        "tags:",
+        "[source",
+        "title:",
+        "file:",
+        "chunk id:",
+        "similarity score:",
+        "content:",
+    )
 
     for line in context.splitlines():
         clean_line = line.strip()
@@ -51,40 +60,18 @@ def extract_simple_answer_from_context(context: str) -> str:
         if not clean_line:
             continue
 
-        if clean_line.startswith("#"):
-            continue
+        lower_line = clean_line.lower()
 
-        if clean_line.lower().startswith("source id:"):
-            continue
-
-        if clean_line.lower().startswith("topic:"):
-            continue
-
-        if clean_line.lower().startswith("game:"):
-            continue
-
-        if clean_line.lower().startswith("version:"):
-            continue
-
-        if clean_line.lower().startswith("[document"):
-            continue
-
-        if clean_line.lower().startswith("title:"):
-            continue
-
-        if clean_line.lower().startswith("file:"):
-            continue
-
-        if clean_line.lower().startswith("content:"):
+        if lower_line.startswith(skipped_prefixes):
             continue
 
         lines.append(clean_line)
 
-        if len(lines) >= 8:
+        if len(lines) >= 10:
             break
 
     if not lines:
-        return "Dokumen relevan ditemukan, tetapi tidak ada ringkasan yang bisa dibuat."
+        return "Dokumen relevan ditemukan, tetapi tidak ada isi yang bisa diringkas."
 
     return "\n".join(f"- {line}" for line in lines)
 

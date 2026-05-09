@@ -10,7 +10,11 @@ class SourceDocument(BaseModel):
     title: str
     source_id: str
     file_name: str
-    score: int
+    chunk_id: str
+    category: str
+    topic: str
+    version: str
+    score: float
     preview: str
 
 
