@@ -25,7 +25,7 @@ export default function Home() {
     {
       role: "assistant",
       content:
-        "Halo. Aku adalah HSR assistant Phase 3. Saat ini aku memakai semantic retrieval dengan local vector database untuk mencari knowledge base yang relevan.",
+        "Halo. Aku adalah HSR assistant. Saat ini aku memakai semantic retrieval dengan local vector database untuk mencari knowledge base yang relevan.",
     },
   ]);
 
