@@ -109,7 +109,7 @@ export default function Home() {
             </div>
 
             <a
-              href="/admin"
+              href="/admin/login"
               className="rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-300 hover:border-blue-500 hover:text-white"
             >
               Admin
