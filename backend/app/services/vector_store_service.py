@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import List, Dict
 
@@ -6,7 +7,16 @@ from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunct
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-VECTOR_DB_DIR = BASE_DIR / "vector_db"
+
+VECTOR_DB_PATH = os.getenv("VECTOR_DB_PATH")
+
+if VECTOR_DB_PATH:
+    VECTOR_DB_DIR = Path(VECTOR_DB_PATH)
+else:
+    VECTOR_DB_DIR = BASE_DIR / "vector_db"
+
+COLLECTION_NAME = "hsr_knowledge"
+MIN_SIMILARITY_SCORE = 0.25
 
 COLLECTION_NAME = "hsr_knowledge"
 
