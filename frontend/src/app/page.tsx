@@ -2,9 +2,18 @@
 
 import { FormEvent, useState } from "react";
 
+type SourceDocument = {
+  title: string;
+  source_id: string;
+  file_name: string;
+  score: number;
+  preview: string;
+};
+
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
+  sources?: SourceDocument[];
 };
 
 export default function Home() {
@@ -12,7 +21,7 @@ export default function Home() {
     {
       role: "assistant",
       content:
-        "Halo. Aku adalah HSR assistant versi awal. Saat ini aku belum memakai RAG, tetapi aku bisa membantu menjawab pertanyaan dasar tentang Honkai: Star Rail.",
+        "Halo. Aku adalah HSR assistant Phase 2. Saat ini aku memakai knowledge base lokal sederhana untuk menjawab pertanyaan dasar tentang Honkai: Star Rail.",
     },
   ]);
 
@@ -52,11 +61,13 @@ export default function Home() {
         throw new Error("Failed to get response from backend.");
       }
 
-      const data: { answer: string } = await response.json();
+      const data: { answer: string; sources: SourceDocument[] } =
+        await response.json();
 
       const assistantMessage: ChatMessage = {
         role: "assistant",
         content: data.answer,
+        sources: data.sources,
       };
 
       setMessages((previousMessages) => [
@@ -87,7 +98,7 @@ export default function Home() {
             HSR RAG Chatbot
           </h1>
           <p className="mt-2 text-sm text-slate-400">
-            Phase 1: basic Gemini-powered chatbot without RAG.
+            Phase 2: local knowledge base with simple RAG retrieval.
           </p>
         </header>
 
@@ -100,13 +111,42 @@ export default function Home() {
               }`}
             >
               <div
-                className={`max-w-[80%] whitespace-pre-wrap rounded-xl px-4 py-3 text-sm leading-relaxed ${
+                className={`max-w-[80%] rounded-xl px-4 py-3 text-sm leading-relaxed ${
                   message.role === "user"
                     ? "bg-blue-600 text-white"
                     : "bg-slate-800 text-slate-100"
                 }`}
               >
-                {message.content}
+                <div className="whitespace-pre-wrap">{message.content}</div>
+
+                {message.role === "assistant" &&
+                  message.sources &&
+                  message.sources.length > 0 && (
+                    <div className="mt-4 border-t border-slate-700 pt-3">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        Sources
+                      </p>
+
+                      <div className="space-y-2">
+                        {message.sources.map((source) => (
+                          <div
+                            key={source.source_id}
+                            className="rounded-lg border border-slate-700 bg-slate-900 p-3"
+                          >
+                            <p className="text-xs font-semibold text-slate-200">
+                              {source.title}
+                            </p>
+                            <p className="mt-1 text-xs text-slate-400">
+                              File: {source.file_name} | Score: {source.score}
+                            </p>
+                            <p className="mt-2 text-xs text-slate-500">
+                              {source.preview}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
           ))}
