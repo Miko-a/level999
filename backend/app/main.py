@@ -10,15 +10,20 @@ app = FastAPI(
     version="0.1.0",
 )
 
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")
+FRONTEND_ORIGINS = os.getenv(
+    "FRONTEND_ORIGINS",
+    "http://localhost:3000,http://127.0.0.1:3000"
+)
+
+allowed_origins = [
+    origin.strip()
+    for origin in FRONTEND_ORIGINS.split(",")
+    if origin.strip()
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        FRONTEND_ORIGIN,
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,3 +38,7 @@ def root():
     return {
         "message": "HSR RAG Chatbot Backend is running."
     }
+
+
+
+
